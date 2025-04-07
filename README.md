@@ -1,5 +1,5 @@
 ## ComputerGraphics---HW3
-Implement barycentric coordinates. 
+Homework-3 - Implement barycentric coordinates. 
      - np.linalg.inv
      - Computational Geometric Problem
 ## YouTube Video Link of The Implementing barycentric coordinates
