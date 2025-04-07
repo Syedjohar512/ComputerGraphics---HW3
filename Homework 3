@@ -1,0 +1,68 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Define triangle vertices
+A = np.array([1, 1])
+B = np.array([5, 1])
+C = np.array([3, 4])
+
+def compute_barycentric(P, A, B, C):
+    """
+    Compute the barycentric coordinates (α0, α1, α2) for point P
+    with respect to the triangle ABC.
+    """
+    # Construct matrix for solving the system of equations
+    M = np.array([
+        [A[0], B[0], C[0]],  # x-coordinates
+        [A[1], B[1], C[1]],  # y-coordinates
+        [1, 1, 1]  # Homogeneous coordinate for affine transformation
+    ])
+    
+    P_h = np.array([P[0], P[1], 1])  # Convert P to homogeneous coordinates
+
+    # Solve for barycentric coordinates
+    bary_coords = np.linalg.inv(M) @ P_h
+    return bary_coords
+
+def on_mouse_move(event):
+    """
+    Event handler to update barycentric coordinates
+    as the mouse moves over the figure.
+    """
+    if event.xdata is None or event.ydata is None:
+        return  # Ignore events outside the figure
+
+    P = np.array([event.xdata, event.ydata])
+    alpha0, alpha1, alpha2 = compute_barycentric(P, A, B, C)
+
+    # Clear and redraw the plot with updated coordinates
+    ax.clear()
+    ax.set_xlim(0, 6)
+    ax.set_ylim(0, 5)
+    ax.set_title(f"Barycentric Coords: α0={alpha0:.2f}, α1={alpha1:.2f}, α2={alpha2:.2f}")
+
+    # Draw the triangle
+    triangle = np.array([A, B, C, A])  # Close the triangle loop
+    ax.plot(triangle[:, 0], triangle[:, 1], 'b-', lw=2, label="Triangle ABC")
+
+    # Draw the current mouse position as a red dot
+    ax.plot(P[0], P[1], 'ro', markersize=5, label="Mouse Position")
+
+    # Show legend
+    ax.legend(loc="upper right")
+
+    plt.draw()
+
+# Initialize the plot
+fig, ax = plt.subplots()
+fig.canvas.mpl_connect("motion_notify_event", on_mouse_move)
+
+# Set initial plot limits
+ax.set_xlim(0, 6)
+ax.set_ylim(0, 5)
+ax.set_title("Move the mouse to see barycentric coordinates")
+
+# Call function once to display initial triangle
+on_mouse_move(type('test', (object,), {"xdata": 3, "ydata": 2}))
+
+plt.show()
